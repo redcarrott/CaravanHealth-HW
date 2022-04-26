@@ -1,5 +1,5 @@
 # CaravanHealth-HW
-Amy Jung's Caravan Health coding assignment 
+Amy Jung's Caravan Health coding assignment. 
 
 This respository comprises of: 
 1. [coding assignment](https://github.com/redcarrott/CaravanHealth-HW/blob/main/CaravanHealth_HW.ipynb)
