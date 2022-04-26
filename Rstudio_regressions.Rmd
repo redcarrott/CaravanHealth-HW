@@ -92,8 +92,8 @@ Interpretation: The correlation of length_of_stay, icd_10_diagnosis_code, patien
 
 Interesting insights according to Model 2:
 - with the other variables factored in (compared to Model 1), the coefficient for length_of_stay decreases by 60% (from 4,228.162 to 2,452.569), which indicates omitted variable bias in Model 1
-- ICD code O80 has a negative significant coefficient (-9,072.846***)
-- an increase in patient age decreases total_claim_cost (-18.152**)
+- ICD code O80 has a negative significant coefficient (-9,072.846)
+- an increase in patient age decreases total_claim_cost (-18.152)
 
 
 
