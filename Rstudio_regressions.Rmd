@@ -1,0 +1,99 @@
+---
+title: "CaravanHealth"
+author: "Amy Jung"
+date: '2022-04-26'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+knitr::knit_engines$set(problem_description = function(options) {
+  code <- paste(options$code, collapse = "\n")
+})
+```
+
+
+```{r load packages, message = FALSE}
+library(data.table)
+
+library(sandwich)
+library(lmtest)
+
+library(AER) 
+
+library(ggplot2) 
+library(patchwork)
+
+library(stargazer)
+library(cregg)
+```
+
+## Load Data
+
+```{r pressure, echo=FALSE}
+d = fread('~/CaravanHealth-HW/maternity_claims_2017.csv')
+d
+```
+
+## Regression
+
+### Model 1: only length_of_stay
+
+The intuition is that length_of_stay would be the best indicator of total_claim_cost (more time at hospital = greater cost).
+
+Null hypothesis: no correlation between length_of_stay and total_claim_cost. 
+
+```{r model 1, echo=TRUE}
+# model with only length_of_stay
+
+mod_1 = lm(total_claim_cost ~ 
+                 length_of_stay, data=d)
+
+mod_1$cluster_se <- sqrt(diag(vcovCL(mod_1)))
+
+stargazer(
+  mod_1, 
+  se = list(mod_1$cluster_se), 
+  type = 'text'
+)
+```
+
+Interpretation: The correlation between length_of_stay and total_claim_cost is a statistically significant. An increase in 1 day in the hospital leads to an increase in $4,228.16 in claim costs, according to model 1. 
+
+
+
+### Model 2: length_of_stay + icd_10_diagnosis_code + zip_code + patient_age
+
+The intuition is that icd_10_diagnosis_code, zip_code, and patient_age would also have an impact on total_claim_costs -- with ICD codes used for billing purposes, zip codes relating to SDH (social determinants of health), and patient age maybe correlating with more procedures needed for older mothers. 
+
+```{r basic model, echo=TRUE}
+# model with other variables 
+
+mod_2 = lm(total_claim_cost ~ 
+                 length_of_stay + 
+                 icd_10_diagnosis_code + 
+                 as.factor(zip_code) + 
+                 patient_age, 
+               data=d)
+
+mod_2$cluster_se <- sqrt(diag(vcovCL(mod_2)))
+
+stargazer(
+  mod_2, 
+  se = list(mod_2$cluster_se), 
+  type = 'text'
+)
+```
+
+Model 2 Constant is when: ICD code O03, length of stay 0, patient age 0, zip code 35896.
+
+Interpretation: The correlation of length_of_stay, icd_10_diagnosis_code, patient_age to total_claim_cost is statistically significant. The correlation between zip_code and total_claim_cost is not significant. 
+
+Interesting insights according to Model 2:
+- with the other variables factored in (compared to Model 1), the coefficient for length_of_stay decreases by 60% (from 4,228.162 to 2,452.569), which indicates omitted variable bias in Model 1
+- ICD code O80 has a negative significant coefficient (-9,072.846***)
+- an increase in patient age decreases total_claim_cost (-18.152**)
+
+
+
