@@ -1,6 +1,5 @@
 ## An experiment on whether FaceTune virtual face filters have an effect on the perception of job qualification
 
-Created by Joyce Li, Meer Wu, and Amy Jung for our MIDS Data W241 final project
 
 ## Repository Files
 
